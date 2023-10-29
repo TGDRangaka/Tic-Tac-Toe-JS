@@ -24,7 +24,7 @@ for(let i = 0; i < 9; i++){
 
         if(isValidMove(board, row, col)) {
             movePiece('O', board, row, col);
-            $(".box").eq(i).css('backgroundImage', "url('/imgs/o.png')");
+            $(".box").eq(i).css('backgroundImage', "url('./imgs/o.png')");
 
             if(isHaveWinner(board)){
                 let info = isHaveWinner(board);
@@ -117,7 +117,7 @@ function computerMove(board){
 
     movePiece('X', board, row, col);
     let index = (row * 3) + col;
-    $(".box").eq(index).css('backgroundImage', "url('/imgs/x.png')");
+    $(".box").eq(index).css('backgroundImage', "url('./imgs/x.png')");
 
     if(isHaveWinner(board)){
         let info = isHaveWinner(board);
@@ -143,7 +143,7 @@ function showWinner(pieces){
             background: '#121212',
             backdrop: `
             rgba(0,0,123,0.4)
-            url("/imgs/win.gif")
+            url("./imgs/win.gif")
             center top
             no-repeat
             `
@@ -157,7 +157,7 @@ function showWinner(pieces){
             background: '#121212',
             backdrop: `
             rgba(0,0,123,0.4)
-            url("/imgs/lose.gif")
+            url("./imgs/lose.gif")
             center top
             no-repeat
             `
