@@ -72,4 +72,45 @@ body {
     width: 40%;
     height: 200px;
     border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.scoreboard span {
+    width: 50px;
+    height: 10px;
+    background-color: black;
+}
+
+.player, .computer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    font-size: clamp(1rem, 2vw, 8rem);
+    font-family: monospace;
+}
+
+
+
+/* //////////////////////////// */
+
+@media (max-width: 1000px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .board {
+        width: 60%;
+    }
+
+    .scoreboard {
+        width: 80%;
+    }
+    
+    .player, .computer {
+        /* font-size: clamp(1rem); */
+    }
 }

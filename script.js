@@ -12,13 +12,18 @@ for(let i = 0; i < 3; i++){
 // .box action
 for(let i = 0; i < 9; i++){
     $(".box").eq(i).on('click', ()=>{
-        if(isGameOver) return;
+        if(isGameOver) {
+            resetBoard(board);
+            isGameOver = false;
+            return;
+        }
 
         let row = Number.parseInt(i / 3);
         let col = i % 3;
 
         if(!isHaveValidMoves(board)) {
             isGameOver = true;
+            showWinner(['tied']);
             return;
         }
 
@@ -29,12 +34,12 @@ for(let i = 0; i < 9; i++){
             if(isHaveWinner(board)){
                 let info = isHaveWinner(board);
                 showWinner(info);
-                isGameOver = true;
                 return;
             }
 
             if(!isHaveValidMoves(board)) {
                 isGameOver = true;
+                showWinner(['tied']);
                 return;
             }
 
@@ -44,6 +49,7 @@ for(let i = 0; i < 9; i++){
         }
 
         
+        console.log(board);
 
     });
 }
@@ -86,7 +92,6 @@ function isHaveValidMoves(board){
     let is = false;
     board.map((row) => {
         row.map((piece) => {
-            console.log(piece);
             if(piece === 'EMPTY') is = true;
         });
     });
@@ -122,15 +127,34 @@ function computerMove(board){
     if(isHaveWinner(board)){
         let info = isHaveWinner(board);
         showWinner(info);
-        isGameOver = true;
     }
 }
 
 // showWinner
 function showWinner(pieces){
+    isGameOver = true;
+    $(".box").text("Click to reset board");
+
+    if(pieces[0] === 'tied') {
+        Swal.fire({
+            title: `--Tied--`,
+            width: 600,
+            padding: '3em',
+            color: 'white',
+            background: '#121212',
+            backdrop: `
+            rgba(0,0,123,0.4)
+            url("./imgs/lose.gif")
+            center top
+            no-repeat
+            `
+        })
+        
+        return;
+    }
+
     for(let i = 1; i < 4; i++){
         let index = pieces[i][0] * 3 + pieces[i][1];
-        console.log("W = " + index);
         $(".box").eq(index).css('border', '5px solid red');
     }
 
@@ -148,7 +172,7 @@ function showWinner(pieces){
             no-repeat
             `
         })
-    }else {
+    }else if(pieces[0] === 'X'){
         Swal.fire({
             title: `You Lose :)`,
             width: 600,
@@ -163,4 +187,31 @@ function showWinner(pieces){
             `
         })
     }
+
+    score(pieces[0]);
+}
+
+let playerScore = 0;
+let computerScore = 0;
+
+// score
+function score(side) {
+    if(side === 'O'){
+        $(".player-score").text(++playerScore)
+    }else{
+        $(".computer-score").text(++computerScore);
+    }
+}
+
+// resetBoard
+function resetBoard(board){
+    for(let i = 0; i < 3; i++){
+        for(let j = 0; j < 3; j++){
+            board[i][j] = 'EMPTY';
+        }
+    }
+
+    $(".box").css('backgroundImage', 'none');
+    $(".box").css('border', 'none');
+    $(".box").text("");
 }
