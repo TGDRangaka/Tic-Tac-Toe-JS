@@ -109,27 +109,6 @@ function movePiece(piece, board, row, col){
     board[row][col] = piece;
 }
 
-// computer move
-function computerMove(board){
-    let row = 0,
-        col = 0;
-
-    do {
-        row = Math.floor((Math.random() * 3));
-        col = Math.floor((Math.random() * 3));
-
-    } while (!isValidMove(board, row, col));
-
-    movePiece('X', board, row, col);
-    let index = (row * 3) + col;
-    $(".box").eq(index).css('backgroundImage', "url('./imgs/x.png')");
-
-    if(isHaveWinner(board)){
-        let info = isHaveWinner(board);
-        showWinner(info);
-    }
-}
-
 // showWinner
 function showWinner(pieces){
     isGameOver = true;
@@ -214,4 +193,119 @@ function resetBoard(board){
     $(".box").css('backgroundImage', 'none');
     $(".box").css('border', 'none');
     $(".box").text("");
+}
+
+// computer move
+function computerMove(board){
+    let bestMove = getBestMove(board);
+    let row = bestMove[1], col = bestMove[2];
+    
+    movePiece('X', board, row, col);
+    let index = (row * 3) + col;
+    $(".box").eq(index).css('backgroundImage', "url('./imgs/x.png')");
+    console.log('Best Move === ' + bestMove);
+
+    // let row = 0,
+    //     col = 0;
+
+    // do {
+    //     row = Math.floor((Math.random() * 3));
+    //     col = Math.floor((Math.random() * 3));
+    // } while (!isValidMove(board, row, col));
+
+    // movePiece('X', board, row, col);
+    // let index = (row * 3) + col;
+    // $(".box").eq(index).css('backgroundImage', "url('./imgs/x.png')");
+
+    if(isHaveWinner(board)){
+        let info = isHaveWinner(board);
+        showWinner(info);
+    }
+
+}
+
+// minmax computer move
+function getBestMove(board){
+    let row = 0, col = 0, moves = [], z = -10;
+
+    for(let i = 0; i < 3; i++){
+        for(let j = 0; j < 3; j++){
+            row = i, col = j;
+            if(isValidMove(board, row, col)){
+                movePiece('X', board, row, col);
+                let score = minmax(0, true, board);
+                moves.push([score, row, col]);
+                if(score > z ){
+                    z = score;
+                }
+                undoMove(board, row, col);
+                console.log(row + '-' + col + '  score : ' + score);
+            }
+
+        }
+    }
+    
+    let bestMoves = moves.filter(move => move[0] == z);
+    console.log(bestMoves)
+
+    if(bestMoves.length == 1){
+        return bestMoves[0];
+    }else{
+        return bestMoves[Math.floor((Math.random() * bestMoves.length))];
+    }
+
+}
+
+// minmax 
+function minmax(depth, isPlayer, board){
+    if(depth == 3){
+        return 0;
+    }
+    if(isHaveWinner(board)){
+        let info = isHaveWinner(board);
+        // console.log("winner = " + info);
+        if(info[0] === 'O'){
+            return -10 + depth;
+        }else{
+            return 10 - depth;
+        }
+    }
+
+    let max = 0, min = 0;
+    if(isPlayer){
+        for(let i = 0; i < 3; i++){
+            for(let j = 0; j < 3; j++){
+    
+                let row = i, col = j;
+                if(isValidMove(board, row, col)){
+                    movePiece('O', board, row, col);
+                    let score = minmax(depth + 1, !isPlayer, board);
+                    undoMove(board, row, col);
+
+                    min = score < min ? score : min;
+                }
+            }
+        }
+        return min;
+    }else{
+        for(let i = 0; i < 3; i++){
+            for(let j = 0; j < 3; j++){
+    
+                let row = i, col = j;
+                    if(isValidMove(board, row, col)){
+                    movePiece('X', board, row, col);
+                    let score = minmax(depth + 1, !isPlayer, board);
+                    undoMove(board, row, col);
+
+                    max = score > max ? score : max;
+                }
+            }
+        }
+        return max;
+    }
+}
+
+// undoMove
+function undoMove(board, row, col){
+    board[row][col] = 'EMPTY';
 }
